@@ -1,7 +1,6 @@
 package dk.sdu.mmmi.cbse.playersystem;
 
-import dk.sdu.mmmi.cbse.common.bullet.Bullet;
-import dk.sdu.mmmi.cbse.common.bullet.BulletSPI;
+import dk.sdu.mmmi.cbse.missilesystem.MissileSPI;
 import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
 import dk.sdu.mmmi.cbse.common.data.GameKeys;
@@ -32,10 +31,16 @@ public class PlayerControlSystem implements IEntityProcessingService {
                 player.setX(player.getX() + changeX);
                 player.setY(player.getY() + changeY);
             }
-            if(gameData.getKeys().isDown(GameKeys.SPACE)) {                
+            if(gameData.getKeys().isDown(GameKeys.SPACE)) {
+                Player shooter = (Player) player;
+                if (shooter.canShoot() == false) {
+                    continue;
+                }
                 getBulletSPIs().stream().findFirst().ifPresent(
                         spi -> {world.addEntity(spi.createBullet(player, gameData));}
                 );
+                shooter.shoot();
+
             }
             
         if (player.getX() < 0) {
@@ -58,7 +63,7 @@ public class PlayerControlSystem implements IEntityProcessingService {
         }
     }
 
-    private Collection<? extends BulletSPI> getBulletSPIs() {
-        return ServiceLoader.load(BulletSPI.class).stream().map(ServiceLoader.Provider::get).collect(toList());
+    private Collection<? extends MissileSPI> getBulletSPIs() {
+        return ServiceLoader.load(MissileSPI.class).stream().map(ServiceLoader.Provider::get).collect(toList());
     }
 }
