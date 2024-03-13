@@ -18,6 +18,7 @@
         <module>CommonBullet</module>
         <module>CommonEnemy</module>
         <module>Asteroids</module>
+        <module>Missile</module>
     </modules>
     <properties>
         <java>java</java>
