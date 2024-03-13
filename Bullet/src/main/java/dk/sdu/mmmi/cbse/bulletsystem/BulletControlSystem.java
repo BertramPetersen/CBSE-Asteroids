@@ -24,8 +24,12 @@ public class BulletControlSystem implements IEntityProcessingService, BulletSPI 
     public Entity createBullet(Entity shooter, GameData gameData) {
         Entity bullet = new Bullet();
         bullet.setPolygonCoordinates(1, -1, 1, 1, -1, 1, -1, -1);
-        bullet.setX(shooter.getX());
-        bullet.setY(shooter.getY());
+        double centerX = shooter.getX() + (shooter.getWidth() / 2);
+        double centerY = shooter.getY() + (shooter.getHeight() / 2);
+        double rotation = shooter.getRotation();
+        // Calculate shot point from center of shooter and the rotation in degrees
+        bullet.setX(shooter.getX() + shooter.getWidth());
+        bullet.setY(centerY + (shooter.getHeight() / 2) * Math.sin(Math.toRadians(rotation)));
         bullet.setRotation(shooter.getRotation());
         return bullet;
     }

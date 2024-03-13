@@ -16,30 +16,33 @@ public class EnemyControlSystem implements IEntityProcessingService {
     @Override
     public void process(GameData gameData, World world) {
         for (Entity enemy : world.getEntities(Enemy.class)) {
-            // Enemies move randomly
-            if (Math.random() > 0.5) {
-                enemy.setRotation((float) (Math.random() * 10 -5));
+
+            int randomInt = (int) (Math.random() * 100);
+            if (randomInt < 10) {
+                enemy.setRotation(enemy.getRotation() + 5);
+            } else if (randomInt > 90) {
+                enemy.setRotation(enemy.getRotation() - 5);
             }
-            double changeX = Math.cos(Math.toRadians(enemy.getRotation()));
-            double changeY = Math.sin(Math.toRadians(enemy.getRotation()));
+            double changeX = Math.cos(Math.toRadians(enemy.getRotation())) ;
+            double changeY = Math.sin(Math.toRadians(enemy.getRotation())) ;
             enemy.setX(enemy.getX() + changeX);
             enemy.setY(enemy.getY() + changeY);
-            if (Math.random() > 0.5) {
+            if (Math.random() > 0.95) {
                 getBulletSPIs().stream().findFirst().ifPresent(
                         spi -> {world.addEntity(spi.createBullet(enemy, gameData));}
                 );
             }
             if (enemy.getX() < 0) {
-                enemy.setX(1);
-            }
-            if (enemy.getX() > gameData.getDisplayWidth()) {
                 enemy.setX(gameData.getDisplayWidth() - 1);
             }
+            if (enemy.getX() > gameData.getDisplayWidth()) {
+                enemy.setX(1);
+            }
             if (enemy.getY() < 0) {
-                enemy.setY(1);
+                enemy.setY(gameData.getDisplayHeight() - 1);
             }
             if (enemy.getY() > gameData.getDisplayHeight()) {
-                enemy.setY(gameData.getDisplayHeight() - 1);
+                enemy.setY(1);
             }
         }
     }

@@ -11,6 +11,8 @@ public class Entity implements Serializable {
     private double x;
     private double y;
     private double rotation;
+    private double height;
+    private double width;
             
 
     public String getID() {
@@ -19,12 +21,31 @@ public class Entity implements Serializable {
 
 
     public void setPolygonCoordinates(double... coordinates ) {
+        // Calculate height and width from coordinates
+        double maxX = Double.MIN_VALUE;
+        double maxY = Double.MIN_VALUE;
+        double minX = Double.MAX_VALUE;
+        double minY = Double.MAX_VALUE;
+        for (int i = 0; i < coordinates.length; i+=2) {
+            if (coordinates[i] > maxX) {
+                maxX = coordinates[i];
+            }
+            if (coordinates[i] < minX) {
+                minX = coordinates[i];
+            }
+            if (coordinates[i+1] > maxY) {
+                maxY = coordinates[i+1];
+            }
+            if (coordinates[i+1] < minY) {
+                minY = coordinates[i+1];
+            }
+        }
+        this.height = maxY - minY;
+        this.width = maxX - minX;
         this.polygonCoordinates = coordinates;
     }
 
-    public double[] getPolygonCoordinates() {
-        return polygonCoordinates;
-    }
+    public double[] getPolygonCoordinates() {return polygonCoordinates;}
        
 
     public void setX(double x) {
@@ -42,6 +63,14 @@ public class Entity implements Serializable {
 
     public double getY() {
         return y;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
+    public double getWidth() {
+        return width;
     }
 
     public void setRotation(double rotation) {
