@@ -6,6 +6,7 @@ import dk.sdu.mmmi.cbse.common.data.World;
 import dk.sdu.mmmi.cbse.common.services.ICollideable;
 import dk.sdu.mmmi.cbse.common.services.IPostEntityProcessingService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CollisionManager implements IPostEntityProcessingService {
@@ -14,10 +15,17 @@ public class CollisionManager implements IPostEntityProcessingService {
         public void process(GameData gameData, World world) {
             // To reduce the number of entities to check for collision, we can filter out the entities that are not ICollideable
             List<Entity> entities = world.getEntities().stream().filter(e -> e instanceof ICollideable).toList();
+            List<Entity> removedEntities = new ArrayList<>();
 
             for (Entity e1 : entities) {
+                if(removedEntities.contains(e1)) {
+                    continue;
+                }
                 for (Entity e2 : entities) {
                     if (e1.getID().equals(e2.getID())) {
+                        continue;
+                    }
+                    if (removedEntities.contains(e2)) {
                         continue;
                     }
                     if (checkCollision(e1, e2)) {
@@ -25,6 +33,8 @@ public class CollisionManager implements IPostEntityProcessingService {
                         ((ICollideable) e2).onCollision();
                         world.removeEntity(e1);
                         world.removeEntity(e2);
+                        removedEntities.add(e1);
+                        removedEntities.add(e2);
                     }
                 }
             }
