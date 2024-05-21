@@ -15,32 +15,47 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.lang.module.ModuleFinder;
+import java.net.URI;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static java.util.stream.Collectors.toList;
+import java.net.http.HttpClient;
 
 public class Game {
     private final GameData gameData = new GameData();
     private final World world = new World();
     private final Map<Entity, Polygon> polygons = new ConcurrentHashMap<>();
     private final Pane gameWindow = new Pane();
+    private Text scoreText;
+
     private final List<IGamePluginService> gamePluginServices;
     private final List<IEntityProcessingService> entityProcessingServices;
     private final List<IPostEntityProcessingService> postEntityProcessingServices;
+    private final URI baseURI;
+    private final HttpClient client;
 
     Game(List<IGamePluginService> gamePluginServices, List<IEntityProcessingService> entityProcessingServices, List<IPostEntityProcessingService> postEntityProcessingServices) {
         this.gamePluginServices = gamePluginServices;
         this.entityProcessingServices = entityProcessingServices;
         this.postEntityProcessingServices = postEntityProcessingServices;
+        try {
+            baseURI = new URI("http://localhost:8080/");
+            client = HttpClient.newHttpClient();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public void start(Stage window) throws Exception {
-        Text text = new Text(10, 20, "Destroyed asteroids: 0");
+        scoreText = new Text(10, 20, "Destroyed asteroids: 0");
         gameWindow.setPrefSize(gameData.getDisplayWidth(), gameData.getDisplayHeight());
-        gameWindow.getChildren().add(text);
+        gameWindow.getChildren().add(scoreText);
 
         Scene scene = new Scene(gameWindow);
         scene.setOnKeyPressed(event -> {
@@ -125,6 +140,8 @@ public class Game {
         for (IPostEntityProcessingService postEntityProcessorService : getPostEntityProcessingServices()) {
             postEntityProcessorService.process(gameData, world);
         }
+
+        updateScore();
     }
 
     private void draw() {
@@ -140,6 +157,26 @@ public class Game {
             polygon.setRotate(entity.getRotation());
         }
 
+    }
+
+    private long getScore() throws IOException, InterruptedException {
+        URI getScore = URI.create(baseURI.toString() + "score");
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(getScore)
+                .GET()
+                .build();
+        HttpResponse<String> score = client.send(request, HttpResponse.BodyHandlers.ofString());
+        return Long.parseLong(score.body());
+    }
+
+    private void updateScore(){
+        try {
+            long score = this.getScore();
+            scoreText.setText("Destroyed asteroids: " + score);
+
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Failed to update score");
+        }
     }
 
     public List<IGamePluginService> getPluginServices() {
