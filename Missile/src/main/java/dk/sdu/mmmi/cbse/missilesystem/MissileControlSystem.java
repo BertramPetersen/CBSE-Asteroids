@@ -19,12 +19,13 @@ public class MissileControlSystem implements IEntityProcessingService, MissileSP
     @Override
     public Entity createBullet(Entity shooter, GameData gameData) {
         Entity missile = new Missile();
+        double centerX = shooter.getX() + (shooter.getWidth() / 2);
         double centerY = shooter.getY() + (shooter.getHeight() / 2);
         double rotation = shooter.getRotation();
-        // Calculate shot point from center of shooter and the rotation in degrees
-        missile.setX(shooter.getX() + shooter.getWidth());
-        missile.setY(centerY + (shooter.getHeight() / 2) * Math.sin(Math.toRadians(rotation)));
+        missile.setX(centerX + (shooter.getWidth() / 1.9) * Math.cos(Math.toRadians(rotation)));
+        missile.setY(centerY + (shooter.getHeight() / 1.9) * Math.sin(Math.toRadians(rotation)));
         missile.setRotation(shooter.getRotation());
+        missile.setRadius(2);
         return missile;
     }
 }

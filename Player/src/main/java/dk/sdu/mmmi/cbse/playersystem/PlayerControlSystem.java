@@ -20,10 +20,10 @@ public class PlayerControlSystem implements IEntityProcessingService {
             
         for (Entity player : world.getEntities(Player.class)) {
             if (gameData.getKeys().isDown(GameKeys.LEFT)) {
-                player.setRotation(player.getRotation() - 5);                
+                player.setRotation(player.getRotation() - 5);
             }
             if (gameData.getKeys().isDown(GameKeys.RIGHT)) {
-                player.setRotation(player.getRotation() + 5);                
+                player.setRotation(player.getRotation() + 5);
             }
             if (gameData.getKeys().isDown(GameKeys.UP)) {
                 double changeX = Math.cos(Math.toRadians(player.getRotation()));
@@ -36,7 +36,7 @@ public class PlayerControlSystem implements IEntityProcessingService {
                 if (shooter.canShoot() == false) {
                     continue;
                 }
-                getBulletSPIs().stream().findFirst().ifPresent(
+                getMissileSPIs().stream().findFirst().ifPresent(
                         spi -> {world.addEntity(spi.createBullet(player, gameData));}
                 );
                 shooter.shoot();
@@ -63,7 +63,7 @@ public class PlayerControlSystem implements IEntityProcessingService {
         }
     }
 
-    private Collection<? extends MissileSPI> getBulletSPIs() {
+    private Collection<? extends MissileSPI> getMissileSPIs() {
         return ServiceLoader.load(MissileSPI.class).stream().map(ServiceLoader.Provider::get).collect(toList());
     }
 }

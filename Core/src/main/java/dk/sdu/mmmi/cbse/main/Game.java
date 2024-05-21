@@ -110,13 +110,21 @@ public class Game {
 
     private void update() {
 
+        for (Entity polygonEntity : polygons.keySet()) {
+            if (!world.getEntities().contains(polygonEntity)) {
+                Polygon removedPolygon = polygons.get(polygonEntity);
+                polygons.remove(polygonEntity);
+                gameWindow.getChildren().remove(removedPolygon);
+            }
+        }
+
         // Update
         for (IEntityProcessingService entityProcessorService : getEntityProcessingServices()) {
             entityProcessorService.process(gameData, world);
         }
-//        for (IPostEntityProcessingService postEntityProcessorService : getPostEntityProcessingServices()) {
-//            postEntityProcessorService.process(gameData, world);
-//        }
+        for (IPostEntityProcessingService postEntityProcessorService : getPostEntityProcessingServices()) {
+            postEntityProcessorService.process(gameData, world);
+        }
     }
 
     private void draw() {
