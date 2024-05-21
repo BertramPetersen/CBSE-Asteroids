@@ -22,7 +22,7 @@ public class BulletControlSystem implements IEntityProcessingService, BulletSPI 
 
     @Override
     public Entity createBullet(Entity shooter, GameData gameData) {
-        Entity bullet = new NormalBullet();
+        Entity bullet = new NormalBullet(shooter);
         bullet.setPolygonCoordinates(1, -1, 1, 1, -1, 1, -1, -1);
         double centerX = shooter.getX() + (shooter.getWidth() / 2);
         double centerY = shooter.getY() + (shooter.getHeight() / 2);
