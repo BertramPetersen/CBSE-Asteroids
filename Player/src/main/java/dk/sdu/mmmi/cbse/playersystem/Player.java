@@ -1,6 +1,7 @@
 package dk.sdu.mmmi.cbse.playersystem;
 
 import dk.sdu.mmmi.cbse.common.data.Entity;
+import dk.sdu.mmmi.cbse.common.services.ICollideable;
 
 import java.security.Timestamp;
 
@@ -8,7 +9,7 @@ import java.security.Timestamp;
  *
  * @author Emil
  */
-public class Player extends Entity {
+public class Player extends Entity implements ICollideable {
 
     private long last_shot_time = 0;
 
@@ -31,4 +32,8 @@ public class Player extends Entity {
         return can_shoot;
     }
 
+    @Override
+    public void onCollision() {
+        System.out.println("Player collided");
+    }
 }

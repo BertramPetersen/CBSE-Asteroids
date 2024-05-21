@@ -8,3 +8,4 @@ module Asteroids {
     provides IEntityProcessingService with dk.sdu.mmmi.cbse.asteroidsystem.AsteroidControlSystem;
     provides ISplitPackages with dk.sdu.mmmi.cbse.asteroidsystem.splitpackage;
 }
+

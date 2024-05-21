@@ -31,6 +31,7 @@ public class BulletControlSystem implements IEntityProcessingService, BulletSPI 
         bullet.setX(shooter.getX() + shooter.getWidth());
         bullet.setY(centerY + (shooter.getHeight() / 2) * Math.sin(Math.toRadians(rotation)));
         bullet.setRotation(shooter.getRotation());
+        bullet.setRadius(1);
         return bullet;
     }
 }
